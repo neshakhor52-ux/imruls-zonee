@@ -1,0 +1,4 @@
+body{background:yellow;text-align:center;font-family:sans-serif;overflow:hidden}
+h1{font-size:60px}
+.emoji::before{content:'😀😂🔥💛⭐';position:fixed;animation:move 10s linear infinite}
+@keyframes move{from{left:0}to{left:100%}}

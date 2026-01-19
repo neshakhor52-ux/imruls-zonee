@@ -7,10 +7,10 @@ from datetime import datetime
 from urllib.parse import urlparse, unquote
 import logging
 
-app = Flask(name)
+app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(name)
+logger = logging.getLogger(__name__)
 
 start_time = datetime.now()
 
@@ -19,7 +19,7 @@ REQUEST_TIMEOUT = 30
 MAX_RETRIES = 2
 
 class FacebookProfileScraper:
-    def init(self):
+    def __init__(self):
         self.session = requests.Session()
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -107,7 +107,7 @@ class FacebookProfileScraper:
                 return False
         
         if '/rsrc.php/' in url and not any(x in url.lower() for x in ['.jpg', '.png', '.webp', '.jpeg', 'image']):
-          return False
+            return False
         
         image_indicators = [
             '.jpg', '.jpeg', '.png', '.webp', '.gif', 
@@ -222,7 +222,7 @@ class FacebookProfileScraper:
         for img in img_tags:
             src = img.get('src', '')
             if src and self.is_valid_image_url(src):
-              src = self.sanitize_url(src)
+                src = self.sanitize_url(src)
                 if src and len(src) < 2000:
                     images['all_images'].add(src)
         
@@ -321,7 +321,8 @@ class FacebookProfileScraper:
         images = self.extract_image_urls(html_content)
         
         return images
-      @app.route('/', methods=['GET'])
+
+@app.route('/', methods=['GET'])
 def welcome():
     return jsonify({
         "message": "Facebook Profile Scraper API",
@@ -333,7 +334,7 @@ def welcome():
             "url": "Facebook profile URL (required)"
         },
         "example": "/api/all?url=https://www.facebook.com/share/1BsGawqkh/",
-        "developer": "@imrulbhai69,
+        "developer": "imrulbhai69",
         "version": "2.3.0",
         "uptime": str(datetime.now() - start_time)
     })
@@ -357,7 +358,7 @@ def get_all_images():
         return jsonify({
             "error": "Invalid URL",
             "message": "Please provide a valid Facebook profile URL",
-            "developer": "imrulbhai69",
+            "developer": "@imrulbhai69",
             "time_taken": f"{time.time() - request_start:.2f}s"
         }), 400
     
@@ -399,10 +400,10 @@ def get_all_images():
         return jsonify({
             "error": "Processing failed",
             "message": "Unable to process the request",
-            "developer": "@imrulbhai",
+            "developer": "@imrulbhai69",
             "time_taken": f"{time.time() - request_start:.2f}s"
         }), 500
 
-if name == 'main':
+if __name__ == '__main__':
     print(" Facebook Profile Scraper API v2.3")
     app.run(host='0.0.0.0', port=5000, threaded=True, debug=False)
